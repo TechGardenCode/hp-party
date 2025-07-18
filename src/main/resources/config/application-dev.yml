@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:5432/houseparty
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  docker:
+    compose:
+      enabled: false
+  jpa:
+    properties:
+      hibernate:
+        default_schema: party
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://sso.techgarden.gg/realms/techgarden
