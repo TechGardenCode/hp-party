@@ -24,7 +24,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/public/**").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         .requestMatchers("/**").authenticated())
                 .cors(Customizer.withDefaults())
