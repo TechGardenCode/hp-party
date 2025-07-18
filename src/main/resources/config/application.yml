@@ -1,14 +1,23 @@
 server:
   port: 8000
 spring:
+  docker:
+    compose:
+      enabled: false
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://10.0.60.60:9000/realms/techgarden
+          issuer-uri: https://sso.techgarden.gg/realms/techgarden
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: http://10.0.60.60:9000/realms/techgarden
   jpa:
     hibernate:
       ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
         format_sql: true

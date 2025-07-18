@@ -10,11 +10,11 @@ spring:
     properties:
       hibernate:
         default_schema: party
-    hibernate:
-      ddl-auto: update
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: https://sso.techgarden.gg/realms/techgarden
+logging:
+  level:
+    root: DEBUG
