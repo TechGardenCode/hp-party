@@ -3,7 +3,7 @@ name: Build and Push Docker Image to GHCR
 on:
   push:
     branches:
-      - main  # Change to your default branch if needed
+      - main
 
 jobs:
   build-and-push:
@@ -11,7 +11,7 @@ jobs:
 
     permissions:
       contents: read
-      packages: write  # Needed to push to GHCR
+      packages: write
 
     steps:
       - name: Checkout code
@@ -31,6 +31,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Build the Spring Boot app
+        run: ./mvnw clean package -DskipTests
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -42,7 +45,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-docker-
 
-      - name: Log in to GitHub Container Registry
+      - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
