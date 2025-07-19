@@ -1,7 +1,6 @@
 package gg.techgarden.houseparty.party.controller;
 
 
-import gg.techgarden.houseparty.party.model.common.UserInfoDto;
 import gg.techgarden.houseparty.party.persistence.entity.UserInfo;
 import gg.techgarden.houseparty.party.service.UserService;
 import lombok.RequiredArgsConstructor;
