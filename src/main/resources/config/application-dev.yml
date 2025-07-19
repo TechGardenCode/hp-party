@@ -10,8 +10,3 @@ spring:
     properties:
       hibernate:
         default_schema: party
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: https://sso.techgarden.gg/realms/techgarden

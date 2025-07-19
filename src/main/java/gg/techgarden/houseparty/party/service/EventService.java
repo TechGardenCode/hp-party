@@ -30,7 +30,6 @@ public class EventService {
             userInfoRepository.save(userInfo);
         }
         Page<Object[]> partyInvite = partyRepository.findUpcomingEventsByUserId(UserSessionUtil.getCurrentUserId().orElseThrow(), pageable);
-        UserInfo userInfo = userInfoRepository.findById(userId).orElseThrow();
         return partyInvite.map(obj -> {
             Party party = (Party) obj[0];
             Invite invite = (Invite) obj[1];

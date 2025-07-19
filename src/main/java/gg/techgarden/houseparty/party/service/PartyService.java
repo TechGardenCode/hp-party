@@ -5,6 +5,7 @@ import gg.techgarden.houseparty.party.persistence.entity.Invite;
 import gg.techgarden.houseparty.party.persistence.entity.Party;
 import gg.techgarden.houseparty.party.persistence.entity.UserInfo;
 import gg.techgarden.houseparty.party.persistence.repository.PartyRepository;
+import gg.techgarden.houseparty.party.persistence.repository.UserInfoRepository;
 import gg.techgarden.houseparty.party.util.UserSessionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,17 @@ public class PartyService {
 
     private final PartyRepository partyRepository;
 
+    private final UserInfoRepository userInfoRepository;
+
     public Party createParty(Party party) {
         UUID userId = UserSessionUtil.getCurrentUserId()
                 .orElseThrow();
+
+        if (!userInfoRepository.existsById(userId)) {
+            UserInfo userInfo = UserSessionUtil.getCurrentUserInfo().orElseThrow();
+            userInfoRepository.save(userInfo);
+        }
+
         party.setCreatedBy(UserInfo.builder().id(userId).build());
         party = partyRepository.save(party);
         Invite invite = Invite.builder()

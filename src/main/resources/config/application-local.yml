@@ -2,3 +2,6 @@ spring:
   docker:
     compose:
       enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
