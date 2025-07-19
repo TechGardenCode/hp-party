@@ -20,7 +20,7 @@ public class Party {
     private LocalDateTime startDateTime;
     private String imageUrl;
     private String hostNickname;
-    @OneToOne()
+    @ManyToOne
     @JoinColumn(name = "created_by")
     private UserInfo createdBy;
     private String location;
