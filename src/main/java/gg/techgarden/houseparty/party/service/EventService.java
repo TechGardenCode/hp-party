@@ -5,8 +5,6 @@ import gg.techgarden.houseparty.party.persistence.entity.Invite;
 import gg.techgarden.houseparty.party.persistence.entity.Party;
 import gg.techgarden.houseparty.party.persistence.entity.UserInfo;
 import gg.techgarden.houseparty.party.persistence.repository.PartyRepository;
-import gg.techgarden.houseparty.party.persistence.repository.UserInfoRepository;
-import gg.techgarden.houseparty.party.util.UserSessionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,22 +12,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class EventService {
     private final PartyRepository partyRepository;
-    private final UserInfoRepository userInfoRepository;
+    private final UserService userService;
 
     public Page<UserParty> findUpcomingEventsByUserId(Pageable pageable) {
-        UUID userId = UserSessionUtil.getCurrentUserId()
-                .orElseThrow();
-        if (!userInfoRepository.existsById(userId)) {
-            UserInfo userInfo = UserSessionUtil.getCurrentUserInfo().orElseThrow();
-            userInfoRepository.save(userInfo);
-        }
-        Page<Object[]> partyInvite = partyRepository.findUpcomingEventsByUserId(UserSessionUtil.getCurrentUserId().orElseThrow(), pageable);
+        UserInfo userInfo = userService.getProfile();
+        UUID userId = userInfo.getId();
+
+        Page<Object[]> partyInvite = partyRepository.findUpcomingEventsByUserId(userId, pageable);
         return partyInvite.map(obj -> {
             Party party = (Party) obj[0];
             Invite invite = (Invite) obj[1];
@@ -39,12 +36,9 @@ public class EventService {
     }
 
     public UserParty getEventDetailById(UUID id) {
-        UUID userId = UserSessionUtil.getCurrentUserId()
-                .orElseThrow();
-        if (!userInfoRepository.existsById(userId)) {
-            UserInfo userInfo = UserSessionUtil.getCurrentUserInfo().orElseThrow();
-            userInfoRepository.save(userInfo);
-        }
+        UserInfo userInfo = userService.getProfile();
+        UUID userId = userInfo.getId();
+
         Object[][] partyInvite = partyRepository.findEventDetailById(id, userId)
                 .orElseThrow();
 
@@ -54,5 +48,37 @@ public class EventService {
         Party party = (Party) partyInvite[0][0];
         Invite invite = (Invite) partyInvite[0][1];
         return UserParty.builder().party(party).invite(invite).build();
+    }
+
+    public Page<UserParty> findPendingEventsByUserId(Pageable pageable) {
+        UserInfo userInfo = userService.getProfile();
+        UUID userId = userInfo.getId();
+
+        Page<Object[]> partyInvite = partyRepository.findPendingEventsByUserId(userId, pageable);
+        return partyInvite.map(obj -> {
+            Party party = (Party) obj[0];
+            Invite invite = (Invite) obj[1];
+            return UserParty.builder().party(party).invite(invite).build();
+        });
+    }
+
+    public Page<UserParty> findPastEventsByUserId(Pageable pageable) {
+        UserInfo userInfo = userService.getProfile();
+        UUID userId = userInfo.getId();
+
+        Page<Object[]> partyInvite = partyRepository.findPastEventsByUserId(userId, pageable);
+        return partyInvite.map(obj -> {
+            Party party = (Party) obj[0];
+            Invite invite = (Invite) obj[1];
+            return UserParty.builder().party(party).invite(invite).build();
+        });
+    }
+
+    public Map<String, Integer> getEventStats() {
+        Map<String, Integer> stats = new HashMap<>();
+        stats.put("upcoming", partyRepository.countUpcomingEventsByUserId(userService.getProfile().getId()));
+        stats.put("pending", partyRepository.countPendingEventsByUserId(userService.getProfile().getId()));
+        stats.put("past", partyRepository.countPastEventsByUserId(userService.getProfile().getId()));
+        return stats;
     }
 }

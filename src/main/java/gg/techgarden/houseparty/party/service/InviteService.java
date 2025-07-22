@@ -4,7 +4,6 @@ import gg.techgarden.houseparty.party.model.InviteStatus;
 import gg.techgarden.houseparty.party.persistence.entity.Invite;
 import gg.techgarden.houseparty.party.persistence.entity.UserInfo;
 import gg.techgarden.houseparty.party.persistence.repository.InviteRepository;
-import gg.techgarden.houseparty.party.persistence.repository.UserInfoRepository;
 import gg.techgarden.houseparty.party.util.UserSessionUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class InviteService {
     private final InviteRepository inviteRepository;
-    private final UserInfoRepository userInfoRepository;
+    private final UserService userService;
 
     public Invite createInviteByEmailOrUsername(UUID partyId, String email, String username) {
         if (email != null && !email.isEmpty()) {
@@ -30,7 +29,7 @@ public class InviteService {
     }
 
     public Invite createInviteByUsername(String username, UUID partyId) {
-        UserInfo userInfo = userInfoRepository.findByUsername(username).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
+        UserInfo userInfo = userService.findByUsername(username).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
         Invite invite = Invite.builder()
                 .userId(userInfo.getId())
                 .partyId(partyId)
@@ -41,7 +40,7 @@ public class InviteService {
     }
 
     public Invite createInviteByEmail(String email, UUID partyId) {
-        UserInfo userInfo = userInfoRepository.findByEmail(email).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
+        UserInfo userInfo = userService.findByEmail(email).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
         Invite invite = Invite.builder()
                 .userId(userInfo.getId())
                 .partyId(partyId)

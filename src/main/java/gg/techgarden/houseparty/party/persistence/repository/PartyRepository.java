@@ -22,6 +22,41 @@ public interface PartyRepository extends JpaRepository<Party, UUID> {
             ") AND p.startDateTime > CURRENT_TIMESTAMP")
     Page<Object[]> findUpcomingEventsByUserId(UUID userId, Pageable pageable);
 
+    @Query("SELECT COUNT(p) FROM Party p " +
+            "LEFT JOIN Invite i ON p.id = i.partyId " +
+            "WHERE (i.userId = :userId AND i.status <> 'DECLINED') OR (p.createdBy.id = :userId) " +
+            "AND p.startDateTime > CURRENT_TIMESTAMP")
+    int countUpcomingEventsByUserId(UUID userId);
+
+    @Query("SELECT p, i FROM Party p " +
+            "LEFT JOIN Invite i ON p.id = i.partyId " +
+            "WHERE (" +
+            "(i.userId = :userId " +
+            "AND i.status = 'PENDING') " +
+            ") AND p.startDateTime > CURRENT_TIMESTAMP")
+    Page<Object[]> findPendingEventsByUserId(UUID userId, Pageable pageable);
+
+    @Query("SELECT COUNT(p) FROM Party p " +
+            "LEFT JOIN Invite i ON p.id = i.partyId " +
+            "WHERE (i.userId = :userId AND i.status = 'PENDING') " +
+            "AND p.startDateTime < CURRENT_TIMESTAMP")
+    int countPendingEventsByUserId(UUID userId);
+
+    @Query("SELECT p, i FROM Party p " +
+            "LEFT JOIN Invite i ON p.id = i.partyId " +
+            "WHERE (" +
+            "(i.userId = :userId " +
+            "AND i.status <> 'DECLINED') " +
+            "OR (p.createdBy.id = :userId)" +
+            ") AND p.startDateTime < CURRENT_TIMESTAMP")
+    Page<Object[]> findPastEventsByUserId(UUID userId, Pageable pageable);
+
+    @Query("SELECT COUNT(p) FROM Party p " +
+            "LEFT JOIN Invite i ON p.id = i.partyId " +
+            "WHERE (i.userId = :userId AND i.status <> 'DECLINED') OR (p.createdBy.id = :userId) " +
+            "AND p.startDateTime < CURRENT_TIMESTAMP")
+    int countPastEventsByUserId(UUID userId);
+
     @Query("SELECT p, i FROM Party p " +
             "LEFT JOIN Invite i ON p.id = i.partyId " +
             "WHERE p.id = :id AND i.userId = :userId")

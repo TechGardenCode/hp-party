@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -18,27 +19,28 @@ public class EventController {
 
     private final EventService eventService;
 
+    @GetMapping("/stats")
+    public Map<String, Integer> getEventStats() {
+        return eventService.getEventStats();
+    }
+
     @GetMapping("/upcoming")
     public Page<UserParty> getUpcomingEvents(Pageable pageable) {
-        // all events that you are invited to (as a host, guest) and NOT declined
         return eventService.findUpcomingEventsByUserId(pageable);
     }
 
     @GetMapping("/pending")
-    public List<Party> getPendingEvents() {
-        // all events that you are invited to (as a host, guest) and NOT accepted
-        return List.of();
+    public Page<UserParty> getPendingEvents(Pageable pageable) {
+        return eventService.findPendingEventsByUserId(pageable);
     }
 
     @GetMapping("/past")
-    public List<Party> getPastEvents() {
-        // all events that you are invited to (as a host, guest) and have already happened
-        return List.of();
+    public Page<UserParty> getPastEvents(Pageable pageable) {
+        return eventService.findPastEventsByUserId(pageable);
     }
 
     @GetMapping("/hosting")
     public List<Party> getHostingEvents() {
-        // all events that you are hosting (as a host)
         return List.of();
     }
 
