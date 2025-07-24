@@ -69,4 +69,8 @@ public class InviteService {
                 .build();
         notificationService.createNotification(notification);
     }
+
+    public boolean canUserEditInvite(UUID partyId, UUID userId) {
+        return inviteRepository.existsByPartyIdAndUserId(partyId, userId);
+    }
 }

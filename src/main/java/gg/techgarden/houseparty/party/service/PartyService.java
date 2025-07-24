@@ -64,4 +64,12 @@ public class PartyService {
         party.setId(id);
         return partyRepository.save(party);
     }
+
+    public boolean canUserEditParty(UUID partyId, UUID userId) {
+        if (partyRepository.existsByIdAndCreatedById(partyId, userId)) {
+            // is party creator
+            return true;
+        }
+        return inviteService.canUserEditInvite(partyId, userId);
+    }
 }

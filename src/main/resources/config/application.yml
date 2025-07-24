@@ -9,6 +9,8 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: https://sso.techgarden.gg/realms/techgarden
+  jackson:
+    time-zone: UTC
   jpa:
     hibernate:
       ddl-auto: update

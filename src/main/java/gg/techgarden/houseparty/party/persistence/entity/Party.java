@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Data
@@ -17,7 +18,7 @@ public class Party {
     @GeneratedValue(generator = "UUID")
     private UUID id;
     private String title;
-    private LocalDateTime startDateTime;
+    private OffsetDateTime startDateTime;
     private String imageUrl;
     private String hostNickname;
     @ManyToOne
