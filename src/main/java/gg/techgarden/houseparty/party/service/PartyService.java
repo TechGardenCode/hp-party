@@ -1,7 +1,9 @@
 package gg.techgarden.houseparty.party.service;
 
+import gg.techgarden.houseparty.party.constants.NotificationConstants;
 import gg.techgarden.houseparty.party.model.InviteStatus;
 import gg.techgarden.houseparty.party.persistence.entity.Invite;
+import gg.techgarden.houseparty.party.persistence.entity.Notification;
 import gg.techgarden.houseparty.party.persistence.entity.Party;
 import gg.techgarden.houseparty.party.persistence.entity.UserInfo;
 import gg.techgarden.houseparty.party.persistence.repository.PartyRepository;
@@ -17,6 +19,7 @@ public class PartyService {
 
     private final PartyRepository partyRepository;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     public Party createParty(Party party) {
         UserInfo userInfo = userService.getProfile();
@@ -31,6 +34,13 @@ public class PartyService {
                 .status(InviteStatus.ACCEPTED)
                 .build();
         inviteService.createInvite(invite);
+        Notification notification = Notification.builder()
+                .userId(userId)
+                .title(NotificationConstants.TITLE_PARTY_CREATED)
+                .message("Your party " + party.getTitle() + " has been created successfully.")
+                .actionUrl("/event/detail/" + party.getId())
+                .build();
+        notificationService.createNotification(notification);
         return party;
     }
 

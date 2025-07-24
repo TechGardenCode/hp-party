@@ -1,7 +1,9 @@
 package gg.techgarden.houseparty.party.service;
 
+import gg.techgarden.houseparty.party.constants.NotificationConstants;
 import gg.techgarden.houseparty.party.model.InviteStatus;
 import gg.techgarden.houseparty.party.persistence.entity.Invite;
+import gg.techgarden.houseparty.party.persistence.entity.Notification;
 import gg.techgarden.houseparty.party.persistence.entity.UserInfo;
 import gg.techgarden.houseparty.party.persistence.repository.InviteRepository;
 import gg.techgarden.houseparty.party.util.UserSessionUtil;
@@ -17,6 +19,7 @@ import java.util.UUID;
 public class InviteService {
     private final InviteRepository inviteRepository;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     public Invite createInviteByEmailOrUsername(UUID partyId, String email, String username) {
         if (email != null && !email.isEmpty()) {
@@ -36,7 +39,8 @@ public class InviteService {
                 .invitedById(UserSessionUtil.getCurrentUserId().orElseThrow())
                 .status(InviteStatus.PENDING)
                 .build();
-        return inviteRepository.save(invite);
+        createInviteNotification(invite);
+        return createInvite(invite);
     }
 
     public Invite createInviteByEmail(String email, UUID partyId) {
@@ -47,10 +51,22 @@ public class InviteService {
                 .invitedById(UserSessionUtil.getCurrentUserId().orElseThrow())
                 .status(InviteStatus.PENDING)
                 .build();
-        return inviteRepository.save(invite);
+        createInviteNotification(invite);
+        return createInvite(invite);
     }
 
     public Invite createInvite(Invite invite) {
         return inviteRepository.save(invite);
+    }
+
+    void createInviteNotification(Invite invite) {
+        UserInfo userInfo = userService.getProfile();
+        Notification notification = Notification.builder()
+                .userId(invite.getUserId())
+                .title(NotificationConstants.TITLE_PARTY_INVITE)
+                .message("You have been invited to a party by " + userInfo.getUsername())
+                .actionUrl("/event/detail/" + invite.getPartyId())
+                .build();
+        notificationService.createNotification(notification);
     }
 }
