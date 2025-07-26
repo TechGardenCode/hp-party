@@ -30,7 +30,7 @@ public class ActivityService {
             throw new HttpClientErrorException(HttpStatus.FORBIDDEN, "User does not have permission to view activities for this party");
         }
 
-        return activityRepository.findAllByPartyIdAndUserIdAndTypeAndParentIdIsNullOrderByCreatedAtDesc(partyId, userId, ActivityType.COMMENT, pageable);
+        return activityRepository.findAllByPartyIdAndTypeAndParentIdIsNullOrderByCreatedAtDesc(partyId, ActivityType.COMMENT, pageable);
     }
 
     public Activity createActivity(Activity activity) {

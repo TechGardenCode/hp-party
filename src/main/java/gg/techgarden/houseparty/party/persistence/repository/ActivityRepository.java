@@ -13,6 +13,6 @@ public interface ActivityRepository extends JpaRepository<Activity, UUID> {
     Optional<Activity> findByIdAndUserId(UUID id, UUID userId);
     boolean existsByIdAndUserId(UUID id, UUID userId);
 
-    Page<Activity> findAllByPartyIdAndUserIdAndTypeAndParentIdIsNullOrderByCreatedAtDesc(UUID partyId, UUID userId, ActivityType type, Pageable pageable);
+    Page<Activity> findAllByPartyIdAndTypeAndParentIdIsNullOrderByCreatedAtDesc(UUID partyId, ActivityType type, Pageable pageable);
 
 }
